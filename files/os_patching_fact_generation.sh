@@ -102,7 +102,19 @@ done
 
 if [ -f '/usr/bin/needs-restarting' ]
 then
-  case $(facter os.release.major) in
+  if [[ $(facter os.name) == "Amazon" ]]
+  then
+    if [[ $(facter os.release.major) -eq 2 ]]
+    then
+      MAJOR_RELEASE=7
+    else
+      MAJOR_RELEASE=6
+    fi
+  else
+    MAJOR_RELEASE=$(facter os.release.major)
+  fi
+
+  case $MAJOR_RELEASE in
     7)
       /usr/bin/needs-restarting -r 2>/dev/null 1>/dev/null
       if [ $? -gt 0 ]
